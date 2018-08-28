@@ -179,7 +179,7 @@ def validate(model, dataloader, criterion, use_cuda=False):
     loss = 0
     for ii, (images, labels) in enumerate(dataloader):
 
-        if use_cuda:
+        if use_cuda and torch.cuda.is_available():
             images, labels = images.to('cuda'), labels.to('cuda')
 
         output = model.forward(images)
