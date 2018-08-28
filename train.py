@@ -117,7 +117,7 @@ def train_model_and_save(args, dataloaders):
               'classifier_output': len(cat_to_name),
               'classifier_hidden': [4096, 1024, 512, 256],
               'model': models.vgg13(pretrained=True),
-              'class_to_id': dataloaders['train'].class_to_idx,
+              'class_to_id': image_datasets['train'].class_to_idx,
               'state_dict': model.state_dict()}
 
     torch.save(checkpoint, checkpointfile)
