@@ -79,7 +79,7 @@ def build_classifier(input_size, output_size, hidden_layers):
     model = nn.Sequential(*layers)
     return model
 
-def train_model_and_save(args, dataLoaders):
+def train_model_and_save(args, dataloaders):
     # check if gpu available
     cuda = torch.cuda.is_available
     if args.gpu and cuda:
