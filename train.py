@@ -227,5 +227,5 @@ if __name__ == "__main__":
 
     checkpointfile, test_accuracy = train_model_and_save(args, dataloaders)
 
-    print("Model test accuracy: ", test_accuracy)
+    print("Model test accuracy: {:.4f}".format(test_accuracy))
     print("Trained model is saved in ", checkpointfile)
