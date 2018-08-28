@@ -105,7 +105,7 @@ def train_model_and_save(args, dataLoaders):
     train_model(model, dataloaders['train'], dataloaders['valid'], criterion, optimizer, args.epochs, use_cuda)
 
     # check accuracy on test datasets
-    test_accuracy = validate(model, dataloaders['test'], use_cuda)
+    test_accuracy = validate(model, dataloaders['test'], args.gpu)
 
     # save checkpoint file
     data_folder = Path(args.save_dir)
