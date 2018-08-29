@@ -86,17 +86,23 @@ def train_model_and_save(args, dataloaders):
         use_cuda = True
     else:
         use_cuda = False
-    # only vgg13 is available
+    # two models: vgg13 and alexnet are available
+    model = None
+    classifier_input_dim = None
     if args.arch == 'vgg13':
         model = models.vgg13(pretrained=True)
+        classifier_input_dim = 25088
+    elif args.arch == 'alexnet':
+        model = models.alexnet(pretrained=True)
+        classifier_input_dim = 9216
     else:
-        print(args.arch, " is not implemented yet.")
+        print(args.arch, " is not implemented yet. Please use vgg13 or alexnet.")
         exit(1)
 
     for param in model.parameters():
         param.requires_grad = False
 
-    classifier = build_classifier(25088, len(cat_to_name), [4096, 1024, 512, 256])
+    classifier = build_classifier(classifier_input_dim, len(cat_to_name), [4096, 1024, 512, 256])
 
     model.classifier = classifier
 
@@ -111,14 +117,16 @@ def train_model_and_save(args, dataloaders):
     data_folder = Path(args.save_dir)
     checkpointfile = data_folder / "my_checkpoint_file.pth"
     checkpoint = {
+              'model_name': args.arch,
+              'state_dict': model.state_dict(),
               'opt_state_dict': optimizer.state_dict(),
               'opt_epoch': args.epochs,
-              'classifier_input': 25088,
+              'classifier_input': classifier_input_dim,
               'classifier_output': len(cat_to_name),
               'classifier_hidden': [4096, 1024, 512, 256],
-              'model': models.vgg13(pretrained=True),
-              'class_to_id': image_datasets['train'].class_to_idx,
-              'state_dict': model.state_dict()}
+              'class_to_id': image_datasets['train'].class_to_idx
+              }
+
 
     torch.save(checkpoint, checkpointfile)
     return checkpointfile, test_accuracy
@@ -212,7 +220,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=usage)
     parser.add_argument("data_dir", help="The directory containing the data")
     parser.add_argument("--save_dir", help="The directory for saving the checkpoint", default=cwd)
-    parser.add_argument("--arch", help="The arch for the neuronetwork", default="vgg13")
+    parser.add_argument("--arch", help="The arch for the neuronetwork, vgg13 or alexnet", default="vgg13")
     parser.add_argument("--learning_rate", help="The directory containing the data", type=float, default=0.001)
     parser.add_argument("--hidden_units", help="The directory containing the data", type=int)
     parser.add_argument("--epochs", help="number of epochs", type=int, default=10)

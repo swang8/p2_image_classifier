@@ -20,7 +20,12 @@ def load_checkpoint(filepath, args):
         checkpoint = torch.load(filepath)
     else:
         checkpoint = torch.load(filepath, map_location='cpu')
-    model = checkpoint['model']
+
+    model = None
+    if checkpoint['model_name'] == 'vgg13':
+        model = models.vgg13(pretrained=True)
+    elif checkpoint['model_name'] == 'alexnet':
+        model = models.alexnet(pretrained=True)
     model.class_to_idx = checkpoint['class_to_id']
     model.classifier = build_classifier(checkpoint['classifier_input'], checkpoint['classifier_output'], checkpoint['classifier_hidden'])
     model.load_state_dict(checkpoint['state_dict'])
